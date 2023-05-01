@@ -7,6 +7,7 @@ body main {
 }
 
 main #grid {
+    position: relative;
     width: 500px;
     display: flex;
     justify-content: space-between;
@@ -29,13 +30,12 @@ main #grid .box {
     cursor: pointer;
 }
 
-.disabled {
-    pointer-events: none;
-    user-select: none;
-}
-
 .filled {
     cursor: not-allowed !important;
+}
+
+.winning-box {
+    background-color: green !important;
 }
 
 main #grid .box#one:hover {
