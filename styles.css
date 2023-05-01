@@ -1,0 +1,80 @@
+body main {
+    width: 100%;   
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main #grid {
+    width: 500px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    border: 5px solid black;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: -8px -8px 0px 8px rgba(0, 0, 0, 1);
+}
+
+main #grid .box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 150px;
+    margin: 10px 0;
+    border: 5px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.disabled {
+    pointer-events: none;
+    user-select: none;
+}
+
+.filled {
+    cursor: not-allowed !important;
+}
+
+main #grid .box#one:hover {
+    background-color: #bfcdf2;
+}
+
+main #grid .box#two:hover {
+    background-color: #dfbff2;
+}
+
+main #grid .box#three:hover {
+    background-color: #bfe6f2;
+}
+
+main #grid .box#four:hover {
+    background-color: #bff2c4;
+}
+
+main #grid .box#five:hover {
+    background-color: #f2e2bf;
+}
+
+main #grid .box#six:hover {
+    background-color: #f2bfbf;
+}
+
+main #grid .box#seven:hover {
+    background-color: #f2bfed;
+}
+
+main #grid .box#eight:hover {
+    background-color: #bfc1f2;
+}
+
+main #grid .box#nine:hover {
+    background-color: #e8f2bf;
+}
+
+main #grid .box p {
+    font-family: fantasy;
+    font-size: 8rem;
+}
