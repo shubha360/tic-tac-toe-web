@@ -15,12 +15,68 @@ const seven = new Box(document.querySelector("main #grid .box#seven"))
 const eight = new Box(document.querySelector("main #grid .box#eight"))
 const nine = new Box(document.querySelector("main #grid .box#nine"))
 
-const availableSlots = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+let availableSlots = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
 let twoPlayers = false
 let firstPlayersMove = true
-let gamePaused = false
+let gamePaused = true
+let gameEnded = false
 
 const boxes = document.querySelectorAll("main #grid .box")
+const startButton = document.querySelector("main #left #start")
+const restartButton = document.querySelector("main #left #restart")
+const twoPlayerBox = document.querySelector("main #left input#game-mode")
+const turnIndicatorText = document.querySelector("main #right #turn-indicator")
+const winnerIndicatorText = document.querySelector("main #right #winner-indicator")
+
+startButton.addEventListener("click", () => {
+    startButton.disabled = true
+    restartButton.disabled = false
+    gamePaused = false
+    gameEnded = false
+
+    if (twoPlayerBox.checked) {
+        twoPlayers = true
+        winnerIndicatorText.textContent = "Playing against friend"
+    } else {
+        winnerIndicatorText.textContent = "Playing against computer"
+    }
+    turnIndicatorText.textContent = "Player One's turn"
+})
+
+restartButton.addEventListener("click", () => {
+    twoPlayers = false
+    firstPlayersMove = true
+    gamePaused = true
+
+    startButton.disabled = false
+    restartButton.disabled = true
+
+    one.number = 0
+    two.number = 0
+    three.number = 0
+    four.number = 0
+    five.number = 0
+    six.number = 0
+    seven.number = 0
+    eight.number = 0
+    nine.number = 0
+
+    availableSlots = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+    origBoard = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+
+    boxes.forEach(box => {
+        if (box.classList.contains("winning-box"))
+            box.classList.remove("winning-box")
+
+            if (box.classList.contains("filled"))
+                box.classList.remove("filled")
+        
+        box.children[0].textContent = ""
+    })
+
+    turnIndicatorText.textContent = "^_^"
+    winnerIndicatorText.textContent = "Click start button to start playing!"
+})
 
 boxes.forEach(box => box.addEventListener("click", () => {
     
@@ -30,19 +86,25 @@ boxes.forEach(box => box.addEventListener("click", () => {
             aMove(box.getAttribute("id"), 1)
             determineResult(1)
             
-            
-            if (!gamePaused) {
-                if (twoPlayers)
+            if (!gameEnded && !gamePaused) {
+                if (twoPlayers) {
                     firstPlayersMove = false
+                    turnIndicatorText.textContent = "Player Two's turn."
+                }
                 else {
                     gamePaused = true
-                    setTimeout(function(){
+                    turnIndicatorText.textContent = "Computer's turn."
+                    setTimeout(function() {
                         const bestSpot = minimax(origBoard, aiPlayer)
                         const computerMove = availableSlots[bestSpot.index]
                         aMove(computerMove, 2)
                         gamePaused = false
                         determineResult(2)
-                    }, 500);
+                        
+                        if (!gameEnded)
+                            turnIndicatorText.textContent = "Player One's turn."
+
+                    }, 1000);
                 }
             }
 
@@ -51,6 +113,9 @@ boxes.forEach(box => box.addEventListener("click", () => {
             aMove(box.getAttribute("id"), 2)
             firstPlayersMove = true
             determineResult(2)
+            
+            if (!gameEnded)
+                turnIndicatorText.textContent = "Player One's turn."
         }
     }
 }))
@@ -129,55 +194,55 @@ function aMove(boxId, whichPlayer) {
 }
 
 function determineResult(whichPlayer) {
-    
+
     if (one.number === whichPlayer && two.number === whichPlayer && three.number === whichPlayer) {
         one.element.classList.add("winning-box")
         two.element.classList.add("winning-box")
         three.element.classList.add("winning-box")
         
-        gamePaused = true
+        gameEnded = true
         console.log("Game finished")
     } else if (four.number === whichPlayer && five.number === whichPlayer && six.number === whichPlayer) {
         four.element.classList.add("winning-box")
         five.element.classList.add("winning-box")
         six.element.classList.add("winning-box")
         
-        gamePaused = true
+        gameEnded = true
         console.log("Game finished")
     } else if (seven.number === whichPlayer && eight.number === whichPlayer && nine.number === whichPlayer) {
         seven.element.classList.add("winning-box")
         eight.element.classList.add("winning-box")
         nine.element.classList.add("winning-box")
         
-        gamePaused = true
+        gameEnded = true
         console.log("Game finished")
     } else if (one.number === whichPlayer && four.number === whichPlayer && seven.number === whichPlayer) {
         one.element.classList.add("winning-box")
         four.element.classList.add("winning-box")
         seven.element.classList.add("winning-box")
         
-        gamePaused = true
+        gameEnded = true
         console.log("Game finished")
     } else if (two.number === whichPlayer && five.number === whichPlayer && eight.number === whichPlayer) {
         two.element.classList.add("winning-box")
         five.element.classList.add("winning-box")
         eight.element.classList.add("winning-box")
         
-        gamePaused = true
+        gameEnded = true
         console.log("Game finished")
     } else if (three.number === whichPlayer && six.number === whichPlayer && nine.number === whichPlayer) {
         three.element.classList.add("winning-box")
         six.element.classList.add("winning-box")
         nine.element.classList.add("winning-box")
         
-        gamePaused = true
+        gameEnded = true
         console.log("Game finished")
     } else if (one.number === whichPlayer && five.number === whichPlayer && nine.number === whichPlayer) {
         one.element.classList.add("winning-box")
         five.element.classList.add("winning-box")
         nine.element.classList.add("winning-box")
         
-        gamePaused = true
+        gameEnded = true
         console.log("Game finished")
     } else if (seven.number === whichPlayer && five.number === whichPlayer && three.number === whichPlayer) {
             
@@ -185,28 +250,32 @@ function determineResult(whichPlayer) {
         five.element.classList.add("winning-box")
         three.element.classList.add("winning-box")
         
-        gamePaused = true
-        console.log("Game finished")
+        gameEnded = true
     }
-        
+    
+    if (gameEnded) {
+        gamePaused = true
+        turnIndicatorText.textContent = "^_^"
+
+        if (whichPlayer === 1)
+            winnerIndicatorText.textContent = "Player One won!"
+        else {
+            if (twoPlayers)
+                winnerIndicatorText.textContent = "Player Two won!"
+            else
+                winnerIndicatorText.textContent = "Computer won!"
+        }
+    }
 }
 
-
-
-
-
-
-
-
-
+// The MiniMax Algorithm
 // human
 var huPlayer = "X";
 // ai
 var aiPlayer = "O";
 
-// this is the board flattened and filled with some values to easier asses the Artificial Inteligence.
-var origBoard = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-//var origBoard = [0,1 ,2,3,4 ,5, 6 ,7,8];
+// this is the board
+var origBoard = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
 // the main minimax function
 function minimax(newBoard, player){

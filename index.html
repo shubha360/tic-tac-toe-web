@@ -4,25 +4,49 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <title>Tic Tac Toe</title>
     <link rel="stylesheet" href="styles.css">
     <script src="index.js" defer></script>
 </head>
 <body>
-    <header>
-    </header>
     <main>
-        <div id="grid">
-            <div class="box" id="one"><p></p></div>
-            <div class="box" id="two"><p></p></div>
-            <div class="box" id="three"><p></p></div>
-            <div class="box" id="four"><p></p></div>
-            <div class="box" id="five"><p></p></div>
-            <div class="box" id="six"><p></p></div>
-            <div class="box" id="seven"><p></p></div>
-            <div class="box" id="eight"><p></p></div>
-            <div class="box" id="nine"><p></p></div>
+        <div id="left">
+            <h1>Tic Tac Toe</h1>
+            <div id="game-mode-div">
+                <h3>Play against:</h3>
+                <div id="radiobox">
+                    <label for="game-mode-comp">Computer</label>
+                    <input type="radio" id="game-mode-comp" name="game-mode">
+                </div>
+                <div id="radiobox">
+                    <label for="game-mode-fr">Friend</label>
+                    <input type="radio" id="game-mode-fr" name="game-mode">
+                </div>
+            </div>
+            <div class="button-div">
+                <button id="start">START</button>
+                <button id="restart" disabled>RESTART</button>
+            </div>
+        </div>
+        <div id="right">
+            <h3 id="turn-indicator">Hi there! Nice to see you.</h3>
+            <div id="grid">
+                <div class="box" id="one"><p></p></div>
+                <div class="box" id="two"><p></p></div>
+                <div class="box" id="three"><p></p></div>
+                <div class="box" id="four"><p></p></div>
+                <div class="box" id="five"><p></p></div>
+                <div class="box" id="six"><p></p></div>
+                <div class="box" id="seven"><p></p></div>
+                <div class="box" id="eight"><p></p></div>
+                <div class="box" id="nine"><p></p></div>
+            </div>
+            <h3 id="winner-indicator">Click start button to start playing!</h3>
         </div>
     </main>
 </body>
