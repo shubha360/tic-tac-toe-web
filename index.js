@@ -1,6 +1,10 @@
+// Represents a box in the grid
 class Box {
     constructor(element) {
+        // Holds the DOM element
         this.element = element
+        
+        // 0 = not occupied yet, 1 = occupied by player one, 2 = occupied by player two or computer
         this.number = 0
     }
 }
@@ -15,16 +19,30 @@ const seven = new Box(document.querySelector("main #grid .box#seven"))
 const eight = new Box(document.querySelector("main #grid .box#eight"))
 const nine = new Box(document.querySelector("main #grid .box#nine"))
 
+// List of the boxes. Used for computer's move only.
 let availableSlots = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+
+// True for two player game mode
 let twoPlayers = false
+
+// True means player one will make next move
 let firstPlayersMove = true
+
+// True means game is paused, no moves can be made
 let gamePaused = true
+
+// True means either a player won or the match is tied
 let gameEnded = false
+
+// Keeps count of the total moves
+let totalMoves = 0
 
 const boxes = document.querySelectorAll("main #grid .box")
 const startButton = document.querySelector("main #left #start")
 const restartButton = document.querySelector("main #left #restart")
-const twoPlayerBox = document.querySelector("main #left input#game-mode")
+const gameModeComp = document.querySelector("main #left #game-mode-div #game-mode-comp")
+const gameModeFr = document.querySelector("main #left #game-mode-div #game-mode-fr")
+const compFirst = document.querySelector("main #left #comp-first #comp-first-check")
 const turnIndicatorText = document.querySelector("main #right #turn-indicator")
 const winnerIndicatorText = document.querySelector("main #right #winner-indicator")
 
@@ -34,22 +52,33 @@ startButton.addEventListener("click", () => {
     gamePaused = false
     gameEnded = false
 
-    if (twoPlayerBox.checked) {
+    if (gameModeFr.checked) { // Playing against friend
         twoPlayers = true
         winnerIndicatorText.textContent = "Playing against friend"
-    } else {
+    } 
+    else { // Playing against computer
         winnerIndicatorText.textContent = "Playing against computer"
+        
+        if (compFirst.checked) // Computer will make the first move
+            computersMove()
     }
     turnIndicatorText.textContent = "Player One's turn"
 })
 
+
+// Restart button resets everything
 restartButton.addEventListener("click", () => {
     twoPlayers = false
     firstPlayersMove = true
     gamePaused = true
+    totalMoves = 0
 
     startButton.disabled = false
     restartButton.disabled = true
+    
+    gameModeComp.checked = true
+    gameModeFr.checked = false
+    compFirst.checked = false
 
     one.number = 0
     two.number = 0
@@ -60,8 +89,7 @@ restartButton.addEventListener("click", () => {
     seven.number = 0
     eight.number = 0
     nine.number = 0
-
-    availableSlots = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+    
     origBoard = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
     boxes.forEach(box => {
@@ -74,52 +102,84 @@ restartButton.addEventListener("click", () => {
         box.children[0].textContent = ""
     })
 
-    turnIndicatorText.textContent = "^_^"
+    turnIndicatorText.textContent = "Waiting is boring"
     winnerIndicatorText.textContent = "Click start button to start playing!"
 })
 
+// If a box is clicked...
 boxes.forEach(box => box.addEventListener("click", () => {
     
     if (!gamePaused) {
         if (box.children[0].textContent === "" && firstPlayersMove) {
-
+            
+            // Perfomrs player one's move
             aMove(box.getAttribute("id"), 1)
-            determineResult(1)
+            
+            totalMoves++ // Increases the number of moves
+            determineResult(1) // checks if game can be concluded
             
             if (!gameEnded && !gamePaused) {
+                
+                // Player two's move if playing against friend
+                // Or else computer's move
+                
                 if (twoPlayers) {
+                    
                     firstPlayersMove = false
-                    turnIndicatorText.textContent = "Player Two's turn."
+                    turnIndicatorText.textContent = "Player Two's turn"
                 }
-                else {
-                    gamePaused = true
-                    turnIndicatorText.textContent = "Computer's turn."
-                    setTimeout(function() {
-                        const bestSpot = minimax(origBoard, aiPlayer)
-                        const computerMove = availableSlots[bestSpot.index]
-                        aMove(computerMove, 2)
-                        gamePaused = false
-                        determineResult(2)
-                        
-                        if (!gameEnded)
-                            turnIndicatorText.textContent = "Player One's turn."
-
-                    }, 1000);
-                }
+                else
+                    computersMove()
             }
 
         } else if (box.children[0].textContent === "" && !firstPlayersMove) {
             
+            // Perfomrs player two's move
             aMove(box.getAttribute("id"), 2)
             firstPlayersMove = true
-            determineResult(2)
+            totalMoves++ // Increases the number of moves
+            determineResult(2) // checks if game can be concluded
             
             if (!gameEnded)
-                turnIndicatorText.textContent = "Player One's turn."
+                turnIndicatorText.textContent = "Player One's turn"
         }
     }
 }))
 
+// Simulates a computer move
+function computersMove() {
+    
+    // Pauses the game to perform computer's move
+    gamePaused = true
+    turnIndicatorText.textContent = "Computer's turn"
+    
+    // Takes one second before making the move
+    setTimeout(function() {
+        
+        // Finds the best move
+        const bestSpot = minimax(origBoard, aiPlayer)
+        
+        // Finds the name of the box
+        const computerMove = availableSlots[bestSpot.index]
+        
+        // Performs the move
+        aMove(computerMove, 2)
+        
+        // Unpauses the game
+        gamePaused = false
+        totalMoves++ // Increases the number of moves
+        determineResult(2) // checks if game can be concluded
+        
+        if (!gameEnded)
+            turnIndicatorText.textContent = "Player One's turn"
+
+    }, 1000);
+}
+
+// Performs a move
+// boxId is the name of the box (eg. one, four)
+// whichPlayer = 1 means player one's move,
+// whichPlayer = 2 means player two's or computer's move,
 function aMove(boxId, whichPlayer) {
 
     let sign = "X"
@@ -128,6 +188,7 @@ function aMove(boxId, whichPlayer) {
         sign = "O"
 
     switch(boxId) {
+        
         case "one":
             one.number = whichPlayer
             one.element.children[0].textContent = sign
@@ -193,6 +254,8 @@ function aMove(boxId, whichPlayer) {
     }
 }
 
+
+// Determines if game is concluded
 function determineResult(whichPlayer) {
 
     if (one.number === whichPlayer && two.number === whichPlayer && three.number === whichPlayer) {
@@ -251,24 +314,34 @@ function determineResult(whichPlayer) {
         three.element.classList.add("winning-box")
         
         gameEnded = true
+    } else if (totalMoves >= 9) { // Game is tied
+        gameEnded = true
+        
+        // For tie, total moves will be 10. Because it is possible that a player could win the game at the 9th move.
+        totalMoves++ 
     }
     
     if (gameEnded) {
         gamePaused = true
-        turnIndicatorText.textContent = "^_^"
-
-        if (whichPlayer === 1)
+        turnIndicatorText.textContent = "The game concluded"
+        
+        // Game is tied if number of total moves is 10 or more
+        if (totalMoves >= 10) {
+            winnerIndicatorText.textContent = "A precious tie!"
+        } else {
+            if (whichPlayer === 1)
             winnerIndicatorText.textContent = "Player One won!"
-        else {
-            if (twoPlayers)
-                winnerIndicatorText.textContent = "Player Two won!"
-            else
-                winnerIndicatorText.textContent = "Computer won!"
+            else {
+                if (twoPlayers)
+                    winnerIndicatorText.textContent = "Player Two won!"
+                else
+                    winnerIndicatorText.textContent = "Computer won!"
+            }
         }
     }
 }
 
-// The MiniMax Algorithm
+// The MiniMax Algorithm - code and comments collected from internet
 // human
 var huPlayer = "X";
 // ai
