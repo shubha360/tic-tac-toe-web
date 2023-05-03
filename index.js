@@ -62,7 +62,11 @@ startButton.addEventListener("click", () => {
         if (compFirst.checked) // Computer will make the first move
             computersMove()
     }
-    turnIndicatorText.textContent = "Player One's turn"
+
+    if (compFirst.checked && !twoPlayers)
+        turnIndicatorText.textContent = "Computer's turn"
+    else
+        turnIndicatorText.textContent = "Player One's turn"
 })
 
 
@@ -116,7 +120,7 @@ boxes.forEach(box => box.addEventListener("click", () => {
             aMove(box.getAttribute("id"), 1)
             
             totalMoves++ // Increases the number of moves
-            determineResult(1) // checks if game can be concluded
+            determineResult(1) // checks if game can be ended
             
             if (!gameEnded && !gamePaused) {
                 
@@ -138,7 +142,7 @@ boxes.forEach(box => box.addEventListener("click", () => {
             aMove(box.getAttribute("id"), 2)
             firstPlayersMove = true
             totalMoves++ // Increases the number of moves
-            determineResult(2) // checks if game can be concluded
+            determineResult(2) // checks if game can be ended
             
             if (!gameEnded)
                 turnIndicatorText.textContent = "Player One's turn"
@@ -168,7 +172,7 @@ function computersMove() {
         // Unpauses the game
         gamePaused = false
         totalMoves++ // Increases the number of moves
-        determineResult(2) // checks if game can be concluded
+        determineResult(2) // checks if game can be ended
         
         if (!gameEnded)
             turnIndicatorText.textContent = "Player One's turn"
@@ -255,7 +259,7 @@ function aMove(boxId, whichPlayer) {
 }
 
 
-// Determines if game is concluded
+// Determines if game is ended
 function determineResult(whichPlayer) {
 
     if (one.number === whichPlayer && two.number === whichPlayer && three.number === whichPlayer) {
@@ -323,7 +327,7 @@ function determineResult(whichPlayer) {
     
     if (gameEnded) {
         gamePaused = true
-        turnIndicatorText.textContent = "The game concluded"
+        turnIndicatorText.textContent = "We came to a conclusion"
         
         // Game is tied if number of total moves is 10 or more
         if (totalMoves >= 10) {
