@@ -79,10 +79,6 @@ restartButton.addEventListener("click", () => {
 
     startButton.disabled = false
     restartButton.disabled = true
-    
-    gameModeComp.checked = true
-    gameModeFr.checked = false
-    compFirst.checked = false
 
     one.number = 0
     two.number = 0
@@ -331,15 +327,15 @@ function determineResult(whichPlayer) {
         
         // Game is tied if number of total moves is 10 or more
         if (totalMoves >= 10) {
-            winnerIndicatorText.textContent = "A precious tie!"
+            winnerIndicatorText.textContent = "A precious tie! Click restart to start a new game."
         } else {
             if (whichPlayer === 1)
-            winnerIndicatorText.textContent = "Player One won!"
+            winnerIndicatorText.textContent = "Player One won! Click restart to start a new game."
             else {
                 if (twoPlayers)
-                    winnerIndicatorText.textContent = "Player Two won!"
+                    winnerIndicatorText.textContent = "Player Two won! Click restart to start a new game."
                 else
-                    winnerIndicatorText.textContent = "Computer won!"
+                    winnerIndicatorText.textContent = "Computer won! Click restart to start a new game."
             }
         }
     }
