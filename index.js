@@ -59,8 +59,32 @@ startButton.addEventListener("click", () => {
     else { // Playing against computer
         winnerIndicatorText.textContent = "Playing against computer"
         
-        if (compFirst.checked) // Computer will make the first move
-            computersMove()
+        // Computer will make the first move, a random move
+        if (compFirst.checked) {
+            // Pauses the game to perform computer's move
+            gamePaused = true
+            turnIndicatorText.textContent = "Computer's turn"
+            
+            // Takes one second before making the move
+            setTimeout(function() {
+                
+                // Finds the best move
+                const spot = Math.floor(Math.random() * 9)
+                
+                // Finds the name of the box
+                const computerMove = availableSlots[spot]
+                
+                // Performs the move
+                aMove(computerMove, 2)
+                
+                // Unpauses the game
+                gamePaused = false
+                totalMoves++ // Increases the number of moves
+                
+                turnIndicatorText.textContent = "Player One's turn"
+
+            }, 1000);
+        }
     }
 
     if (compFirst.checked && !twoPlayers)
